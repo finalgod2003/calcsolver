@@ -1,0 +1,67 @@
+---
+import type { MathToolSlug } from '../data/tools';
+interface Props { tool: MathToolSlug }
+const { tool } = Astro.props;
+const examples: Record<MathToolSlug, { label: string; values: Record<string, string> }[]> = {
+  'fraction-calculator': [
+    { label: '1/2 + 1/3', values: { an: '1', ad: '2', operation: 'add', bn: '1', bd: '3' } },
+    { label: '3/4 ÷ 2/5', values: { an: '3', ad: '4', operation: 'divide', bn: '2', bd: '5' } },
+    { label: '−2/3 × 9/4', values: { an: '-2', ad: '3', operation: 'multiply', bn: '9', bd: '4' } },
+  ],
+  'equivalent-fractions': [
+    { label: 'Equivalent to 2/3', values: { numerator: '2', denominator: '3', count: '5' } },
+    { label: 'Equivalent to 6/8', values: { numerator: '6', denominator: '8', count: '5' } },
+  ],
+  'percentage-calculator': [
+    { label: '15% of 200', values: { mode: 'of', first: '15', second: '200' } },
+    { label: '80 → 100', values: { mode: 'change', first: '80', second: '100' } },
+    { label: '20% off 150', values: { mode: 'decrease', first: '150', second: '20' } },
+  ],
+  'equation-solver': [
+    { label: '2x + 3 = 11', values: { equation: '2x + 3 = 11' } },
+    { label: '3(x − 2) = x + 8', values: { equation: '3(x - 2) = x + 8' } },
+    { label: 'x/2 + 1/3 = 5/6', values: { equation: 'x/2 + 1/3 = 5/6' } },
+  ],
+};
+---
+<section class="math-tool" data-math-tool={tool} aria-label="Interactive calculator">
+  <div class="tool-input-panel">
+    <p class="section-label">01 / Your calculation</p>
+    <form id="math-tool-form" novalidate>
+      {tool === 'fraction-calculator' && <>
+        <div class="fraction-inputs">
+          <fieldset><legend>First fraction</legend><label for="an">Numerator</label><input id="an" name="an" inputmode="numeric" value="1" maxlength="31" required /><span class="fraction-rule"></span><label for="ad">Denominator</label><input id="ad" name="ad" inputmode="numeric" value="2" maxlength="31" required /></fieldset>
+          <div class="operation-input"><label for="operation">Operation</label><select id="operation" name="operation"><option value="add">+ Add</option><option value="subtract">− Subtract</option><option value="multiply">× Multiply</option><option value="divide">÷ Divide</option></select></div>
+          <fieldset><legend>Second fraction</legend><label for="bn">Numerator</label><input id="bn" name="bn" inputmode="numeric" value="1" maxlength="31" required /><span class="fraction-rule"></span><label for="bd">Denominator</label><input id="bd" name="bd" inputmode="numeric" value="3" maxlength="31" required /></fieldset>
+        </div>
+      </>}
+      {tool === 'equivalent-fractions' && <>
+        <div class="tool-field-pair"><div><label for="numerator">Numerator</label><input id="numerator" name="numerator" inputmode="numeric" value="2" maxlength="31" required /></div><div><label for="denominator">Denominator</label><input id="denominator" name="denominator" inputmode="numeric" value="3" maxlength="31" required /></div></div>
+        <label for="count">Number of equivalent fractions</label><select id="count" name="count">{Array.from({ length: 10 }, (_, index) => index + 1).map(count => <option value={count} selected={count === 5}>{count}</option>)}</select>
+      </>}
+      {tool === 'percentage-calculator' && <>
+        <label for="mode">What would you like to find?</label><select id="mode" name="mode"><option value="of">A percentage of a number</option><option value="ratio">A is what percent of B?</option><option value="change">Percentage change</option><option value="increase">Increase a number by a percentage</option><option value="decrease">Decrease a number by a percentage</option></select>
+        <div class="tool-field-pair"><div><label for="first" id="first-label">Percentage (%)</label><input id="first" name="first" inputmode="decimal" value="15" maxlength="40" required /></div><div><label for="second" id="second-label">Number</label><input id="second" name="second" inputmode="decimal" value="200" maxlength="40" required /></div></div>
+        <p class="tool-field-hint" id="percentage-hint">Find the amount represented by this percentage.</p>
+      </>}
+      {tool === 'equation-solver' && <>
+        <label for="equation">Equation in x</label><input id="equation" name="equation" value="2x + 3 = 11" maxlength="240" spellcheck="false" autocomplete="off" aria-describedby="equation-hint" required />
+        <p class="tool-field-hint" id="equation-hint">Write both sides of the equation. You can enter 2x, 2*x, x/3 or 2(x + 1). Quadratic equations are not supported.</p>
+      </>}
+      <button class="tool-submit" type="submit">{tool === 'equivalent-fractions' ? 'Generate fractions' : tool === 'equation-solver' ? 'Solve equation' : 'Calculate'} <span aria-hidden="true">→</span></button>
+      <p class="tool-error" id="tool-error" role="alert" hidden></p>
+      <p class="tool-status" id="tool-status" role="status"></p>
+    </form>
+    <div class="tool-examples"><span>Try an example</span>{examples[tool].map(example => <button type="button" data-tool-example={JSON.stringify(example.values)}>{example.label}</button>)}</div>
+    <noscript><p>Enable JavaScript to calculate. These tools run in your browser.</p></noscript>
+  </div>
+  <div class="tool-output-panel" id="tool-output" hidden aria-label="Calculation result">
+    <p class="section-label">02 / Result & method</p>
+    <div class="tool-answer"><p id="result-label"></p><output id="result-answer" form="math-tool-form"></output><p id="result-summary"></p></div>
+    <h2 id="steps-title">Step by step</h2>
+    <ol class="tool-steps" id="result-steps"></ol>
+  </div>
+</section>
+<script>
+  import '../scripts/math-tools';
+</script>

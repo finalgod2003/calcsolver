@@ -3,6 +3,9 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: frame-ancestors 'self'
-/games/*
+/games/2048/*
+  Cache-Control: public, max-age=3600
+  X-Robots-Tag: noindex, follow
+/games/snake/*
   Cache-Control: public, max-age=3600
   X-Robots-Tag: noindex, follow

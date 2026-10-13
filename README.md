@@ -28,6 +28,8 @@ See [SEO optimization notes](docs/seo-optimization.md) for keyword headings, str
 
 - Paper white, graphite and yellow visual system with Manrope typography; responsive homepage, scientific calculator and math reference directory.
 - Safe expression parser: arithmetic, brackets, powers, percentages, factorials, constants and degree-based functions. No JavaScript `eval`.
+- Four dedicated math tools: exact fraction arithmetic, equivalent fraction generation, five percentage calculations and a step-by-step linear equation solver. Find them under **Math tools** on the homepage.
+- **Games / Code Mode** opens `/games/` directly, with name/code search, local/external filtering and a four-digit code field.
 - Code Mode: **0000** opens the activity directory. Other four-digit codes open their activities.
 - 130 external activity entries plus two locally hosted games.
 - Local **2048 Classic (3001)** and **Snake (3002)**, with keyboard/touch controls and saved best scores.

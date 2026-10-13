@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import Activities from '../../components/Activities.astro';
+import catalog from '../../data/activities.json';
+import { localActivities, isAllowedActivityUrl, type Activity } from '../../lib/activities';
+const games: Activity[] = [...localActivities, ...catalog].filter(game => isAllowedActivityUrl(game.iframe));
+---
+<Base title="Games & Code Mode Directory | CalcSolver" description="Browse CalcSolver games by name or four-digit code. Play local 2048 and Snake, find an activity, or explore the Code Mode directory." pageType="CollectionPage" breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Games & Code Mode', path: '/games/' }]}>
+  <div class="tool-page content-wide">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Games & Code Mode</span></nav>
+    <div class="games-heading">
+      <header class="tool-page-heading"><span class="section-label">Take a little break</span><h1>Games & Code Mode</h1><p>Pick a game to play, or search by name or code. Start with 2048 and Snake, hosted right here on CalcSolver.</p><p class="games-note">On the calculator, turn on Code Mode and enter 0000 for the directory, or a game's four-digit code to open it.</p></header>
+      <form class="game-code-form" id="game-code-form" novalidate><label for="game-code">Have a four-digit code?</label><p id="game-code-hint">Enter a game's code, or 0000 to see all games.</p><div class="game-code-fields"><input id="game-code" name="code" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="e.g. 3001" autocomplete="off" aria-describedby="game-code-hint game-code-status" required /><button type="submit">Open</button></div><p id="game-code-status" role="status"></p></form>
+    </div>
+    <section class="games-directory" id="games-directory" aria-label="Game directory">
+      <div class="directory-filters"><div><label for="directory-search">Search games</label><input id="directory-search" type="search" placeholder="Name or four-digit code" autocomplete="off" /></div><div><label for="directory-source">Game source</label><select id="directory-source"><option value="all">All games</option><option value="local">Local games</option><option value="external">External games</option></select></div><p class="directory-count" id="directory-count" role="status">{games.length} games</p></div>
+      <div class="activity-grid" id="directory-grid">{games.map(game => <a class="activity-card" href={game.iframe} data-game-code={game.code} data-game-name={game.name} data-game-source={game.local ? 'local' : 'external'} aria-label={`${game.name}, code ${game.code}`} target={game.local ? undefined : '_blank'} rel={game.local ? undefined : 'noopener noreferrer'}><span class="activity-picture"><span class="thumbnail-fallback" aria-hidden="true">{game.name.slice(0, 2).toUpperCase()}</span><img src={game.thumb} alt="" width="180" height="180" loading="lazy" decoding="async" /></span><span class="activity-name">{game.name}</span><span class="activity-code">{game.code}</span>{game.local && <span class="local-badge">LOCAL</span>}</a>)}</div>
+      <div class="directory-empty" id="directory-empty" hidden><h2>No games found</h2><p>Try another name or a four-digit code.</p><button class="vault-button" id="directory-reset">Show all games</button></div>
+    </section>
+    <p class="games-note">Local games run on this website. External games and thumbnails come from third-party providers; availability can vary.</p>
+    <noscript><p>Game links work without JavaScript. Enable JavaScript to search, use codes and open the built-in player.</p></noscript>
+  </div>
+  <Activities />
+</Base>
+<script>
+  import '../../scripts/game-directory';
+</script>

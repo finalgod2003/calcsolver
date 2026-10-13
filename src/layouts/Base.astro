@@ -56,6 +56,8 @@ const image = `${site.url}/og-image.png`;
         <div class="header-brand"><a class="wordmark" href="/" aria-label="CalcSolver home">Calc<span>Solver</span></a><span class="brand-caption">Calculator & math guides</span></div>
         <button class="menu-toggle" aria-controls="primary-navigation" aria-expanded="false" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
         <nav id="primary-navigation" aria-label="Primary">
+          <a href="/#math-tools" aria-current={Astro.url.pathname.startsWith('/tools/') ? 'location' : undefined}>Math tools</a>
+          <a href="/games/" aria-current={Astro.url.pathname === '/games/' ? 'page' : undefined}>Games / Code Mode</a>
           {categories.map(category => <a href={`/category/${category.slug}/`} aria-current={Astro.url.pathname.startsWith(`/category/${category.slug}`) ? 'page' : undefined}>{category.name}</a>)}
         </nav>
       </div>

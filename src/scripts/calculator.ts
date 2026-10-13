@@ -115,7 +115,7 @@ if (calculator) {
     const dialog = document.querySelector<HTMLDialogElement>('#activities');
     if (dialog?.open || event.ctrlKey || event.metaKey || event.altKey) return;
     const target = event.target as HTMLElement;
-    if (target !== display && target !== mode && (target.matches('input, textarea, select') || target.isContentEditable || (target.matches('button') && !calculator!.contains(target)))) return;
+    if (target !== display && target !== mode && (target.matches('input, textarea, select') || target.isContentEditable || (target.closest('a, button, summary') && !calculator!.contains(target)))) return;
     if (event.key === 'Enter' || event.key === '=') { event.preventDefault(); solve(); }
     else if (event.key === 'Escape') { event.preventDefault(); clear(); }
     else if (mode.checked && /^\d$/.test(event.key)) { event.preventDefault(); input(event.key); }

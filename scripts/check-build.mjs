@@ -86,7 +86,7 @@ for(const path of htmlFiles) {
 }
 const sitemap = await readFile(resolve(root,'sitemap.xml'),'utf8');
 const urls = Array.from(sitemap.matchAll(/<loc>(.*?)<\/loc>/g),match=>match[1]);
-assert.equal(urls.length,38,'Sitemap must contain the homepage, 3 info pages, 3 categories and 31 articles.');
+assert.equal(urls.length,43,'Sitemap must contain the homepage, 3 info pages, 3 categories, 31 articles, 4 math tools and the games directory.');
 assert.deepEqual(new Set(urls), indexedUrls, 'Sitemap must include every indexable canonical page and exclude noindex pages.');
 assert.equal(new Set(urls).size, urls.length, 'Sitemap must not contain duplicate URLs.');
 for(const url of urls) {

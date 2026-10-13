@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import MathTool from '../../components/MathTool.astro';
+import { mathTools } from '../../data/tools';
+import { site } from '../../data/site';
+export function getStaticPaths() {
+  return mathTools.map(tool => ({ params: { tool: tool.slug }, props: { tool } }));
+}
+interface Props { tool: typeof mathTools[number] }
+const { tool } = Astro.props;
+const path = `/tools/${tool.slug}/`;
+---
+<Base title={`${tool.name} — Free Online Tool | CalcSolver`} description={tool.description} breadcrumbs={[{ name: 'Home', path: '/' }, { name: tool.name, path }]} structuredData={[{
+  '@type': 'WebApplication', '@id': `${site.url}${path}#tool`, name: tool.name, url: `${site.url}${path}`,
+  description: tool.description, applicationCategory: 'EducationalApplication', operatingSystem: 'Any',
+  isAccessibleForFree: true, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+}]}>
+  <div class="tool-page content-wide">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/#math-tools">Math tools</a><span aria-hidden="true">/</span><span aria-current="page">{tool.name}</span></nav>
+    <header class="tool-page-heading"><span class="section-label">Free math tools</span><h1>{tool.name}</h1><p>{tool.description}</p></header>
+    <p class="tool-scope">{tool.hint}</p>
+    <MathTool tool={tool.slug} />
+    <nav class="more-tools" aria-label="More math tools"><span class="section-label">Keep calculating</span>{mathTools.filter(item => item.slug !== tool.slug).map(item => <a href={`/tools/${item.slug}/`}>{item.name} <span aria-hidden="true">↗</span></a>)}</nav>
+  </div>
+</Base>

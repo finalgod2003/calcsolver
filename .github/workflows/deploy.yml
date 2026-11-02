@@ -37,6 +37,8 @@ jobs:
         run: npm ci
 
       - name: Verify and build site
+        env:
+          PUBLIC_CONTACT_EMAIL: ${{ vars.PUBLIC_CONTACT_EMAIL }}
         run: npm run verify
 
       - name: Check deployment configuration

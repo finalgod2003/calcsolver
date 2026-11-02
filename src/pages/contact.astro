@@ -1,6 +1,45 @@
 ---
 import Base from '../layouts/Base.astro';
-const email = import.meta.env.PUBLIC_CONTACT_EMAIL;
-const validEmail = typeof email==='string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+import { editorial, correctionUrl } from '../data/editorial';
+import { site } from '../data/site';
+const email = import.meta.env.PUBLIC_CONTACT_EMAIL?.trim();
+const validEmail = typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const description = validEmail
+  ? 'Contact CalcSolver by email for website questions, feedback or math corrections. Include the page, your inputs and the result you expected.'
+  : 'Send CalcSolver feedback through its public GitHub issue tracker. Report an incorrect calculation or article, include a reproducible example and follow the correction.';
 ---
-<Base title="Contact & Calculator Help | CalcSolver" description="Find help with CalcSolver calculations, percentage expressions and activities. See what to check and which details to include when reporting a problem." pageType="ContactPage" breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }]}><div class="page-shell"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span> / </span><span>Contact</span></nav><h1>Contact & feedback</h1><p class="page-lead">Help make CalcSolver a little better.</p><div class="article-body">{validEmail ? <p>For questions, suggestions or a problem with the site, email <a href={`mailto:${email}`}>{email}</a>.</p> : <p>A support contact address will be published here when it becomes available. In the meantime, the tips below can help you identify a problem.</p>}<h2>A calculation looks wrong?</h2><p>Check the expression for missing brackets or operators. Scientific functions use degrees. A percentage such as 25% means 0.25; multiplying a price by 25% gives the amount of the discount.</p><h2>An activity does not load?</h2><p>Use Reload or Open in new tab in the player. External providers can change or go offline. Select Local games in the activity source menu to try games hosted on this website.</p><h2>Details that help</h2><p>If you report a problem, include the information below so it can be reproduced:</p><ul><li>The page or four-digit activity code.</li><li>Your device and browser.</li><li>The expression you entered or the steps you followed.</li><li>What you expected and what happened.</li></ul></div><div class="calculator-cta"><span>Learn how your information is used.</span><a href="/privacy/">Read the privacy policy →</a></div></div></Base>
+<Base title="Contact & Report a Math Correction | CalcSolver" description={description} pageType="ContactPage" breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }]} structuredData={[{
+  '@type': 'ContactPoint', '@id': `${site.url}/contact/#support`,
+  contactType: 'website support', url: `${site.url}/contact/`,
+  ...(validEmail ? { email } : {}),
+}]}>
+  <div class="page-shell">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span> / </span><span aria-current="page">Contact</span></nav>
+    <h1>Contact & feedback</h1>
+    <p class="page-lead">A clear route for questions, suggestions and math corrections.</p>
+    {validEmail && <div class="calculator-cta" id="email"><span>Questions, feedback or a calculation problem?</span><a href={`mailto:${email}`}>{email}</a></div>}
+    <div class="article-body">
+      <h2>Reach the CalcSolver project</h2>
+      {validEmail && <p>Email <a href={`mailto:${email}`}>{email}</a> to reach the site maintainer directly. Include the page address and a short description of your question. You do not need a GitHub account to contact us by email.</p>}
+      <p>Use the <a href={editorial.issues}>public GitHub issue tracker</a> to contact the project about the website, a calculation or a guide. You can browse existing reports before opening a new one and follow the discussion on your issue.</p>
+      <p>The link below opens a draft that you can edit before submitting. GitHub requires an account to submit an issue. Reports are public, so include only the example and technical details needed to explain the problem.</p>
+    </div>
+    <div class="calculator-cta" id="report"><span>Share an example we can reproduce.</span><a href={correctionUrl()}>Open a feedback draft on GitHub ↗</a></div>
+    <div class="article-body">
+      <h2>Reporting a math correction</h2>
+      <p>The report link on each tool or guide pre-fills its page address in a GitHub draft. {validEmail && 'For email reports, paste the address into your message. '}Please include:</p>
+      <ul>
+        <li>The exact expression or passage, including brackets and signs.</li>
+        <li>The result you expected, with your reasoning or a reference.</li>
+        <li>The result shown, or the wording that needs correcting.</li>
+        <li>For an interactive problem, the steps to reproduce it and your browser or device.</li>
+      </ul>
+      <p>For example: “On the fraction guide, I entered numerator 1 and denominator 3. I expected an exact fraction alongside the rounded decimal, but …” Keep a repeating value as a fraction when comparing answers so that rounding does not hide the difference.</p>
+      <h2>What happens next?</h2>
+      <p>The report can be reproduced and discussed in its GitHub issue. Corrections appear in the public project history; article changes also update the date shown on the guide. See our <a href="/about/#editorial-policy">math checking policy</a> for the checks and limits used by CalcSolver.</p>
+      <h2>An activity does not load?</h2>
+      <p>Include the four-digit activity code and what happened. You can first try Reload or Open in new tab in the player. External providers can change or go offline; Local games in the activity source menu are hosted on this website.</p>
+    </div>
+    <div class="calculator-cta"><span>Learn how your information is used.</span><a href="/privacy/">Read the privacy policy →</a></div>
+  </div>
+</Base>

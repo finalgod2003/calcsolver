@@ -1,0 +1,33 @@
+---
+import LessonTool from './LessonTool.astro';
+import type { Lesson } from '../data/lessons';
+interface Props { lesson: Lesson }
+const { lesson } = Astro.props;
+---
+<div class="article-body">
+  {lesson.sections.map(section => <section>
+    <h2>{section.heading}</h2>
+    {section.paragraphs.map(paragraph => <p>{paragraph}</p>)}
+    {section.example && <p class="worked-example">{section.example}</p>}
+  </section>)}
+</div>
+<LessonTool tool={lesson.tool} />
+<section class="article-body lesson-mistakes" aria-labelledby="mistakes-title">
+  <h2 id="mistakes-title">Common mistakes to avoid</h2>
+  <dl>{lesson.mistakes.map(mistake => <div><dt>{mistake.title}</dt><dd>{mistake.explanation}</dd></div>)}</dl>
+</section>
+<section class="lesson-practice" id="practice" aria-labelledby="practice-title">
+  <span class="section-label">YOUR TURN</span>
+  <h2 id="practice-title">Check your understanding</h2>
+  <p>Try these questions, then compare your reasoning with the worked answers.</p>
+  {lesson.questions.map((question, index) => <form class="practice-question" data-practice-question data-correct={question.correct} novalidate>
+    <fieldset disabled>
+      <legend><span class="practice-number">{String(index + 1).padStart(2, '0')}</span>{question.prompt}</legend>
+      <div class="practice-choices">{question.choices.map((choice, choiceIndex) => <label><input type="radio" name={`question-${index}`} value={choiceIndex} /><span>{choice}</span></label>)}</div>
+      <button type="button" class="practice-check">Check answer</button>
+    </fieldset>
+    <p class="practice-feedback" role="status"></p>
+    <details class="practice-answer"><summary>Show answer & reasoning</summary><p><strong>{question.choices[question.correct]}</strong> — {question.explanation}</p></details>
+  </form>)}
+  <noscript><p>Enable JavaScript to check your selections, or open each worked answer below the choices.</p></noscript>
+</section>

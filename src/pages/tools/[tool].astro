@@ -2,24 +2,56 @@
 import Base from '../../layouts/Base.astro';
 import MathTool from '../../components/MathTool.astro';
 import { mathTools } from '../../data/tools';
+import { toolGuides } from '../../data/tool-guides';
+import { correctionUrl } from '../../data/editorial';
 import { site } from '../../data/site';
 export function getStaticPaths() {
   return mathTools.map(tool => ({ params: { tool: tool.slug }, props: { tool } }));
 }
 interface Props { tool: typeof mathTools[number] }
 const { tool } = Astro.props;
+const guide = toolGuides[tool.slug];
 const path = `/tools/${tool.slug}/`;
 ---
-<Base title={`${tool.name} — Free Online Tool | CalcSolver`} description={tool.description} breadcrumbs={[{ name: 'Home', path: '/' }, { name: tool.name, path }]} structuredData={[{
+<Base title={guide.seoTitle} description={tool.description} breadcrumbs={[{ name: 'Home', path: '/' }, { name: tool.name, path }]} structuredData={[{
   '@type': 'WebApplication', '@id': `${site.url}${path}#tool`, name: tool.name, url: `${site.url}${path}`,
   description: tool.description, applicationCategory: 'EducationalApplication', operatingSystem: 'Any',
+  mainEntityOfPage: { '@id': `${site.url}${path}#webpage` },
+  publisher: { '@id': `${site.url}/#organization` }, inLanguage: 'en',
+  featureList: guide.formulas.map(formula => formula.name),
   isAccessibleForFree: true, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 }]}>
   <div class="tool-page content-wide">
     <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span aria-hidden="true">/</span><a href="/#math-tools">Math tools</a><span aria-hidden="true">/</span><span aria-current="page">{tool.name}</span></nav>
-    <header class="tool-page-heading"><span class="section-label">Free math tools</span><h1>{tool.name}</h1><p>{tool.description}</p></header>
+    <header class="tool-page-heading"><span class="section-label">Free math tools</span><h1>{tool.name}</h1><p>{guide.introduction}</p></header>
+    <nav class="tool-page-nav" aria-label="On this page"><a href="#calculator">Calculator</a><a href="#how-to-use">How to use</a><a href="#formulas">Formulas</a><a href="#worked-examples">Worked examples</a><a href="#faq">FAQ</a></nav>
     <p class="tool-scope">{tool.hint}</p>
     <MathTool tool={tool.slug} />
+    <div class="tool-guide article-body">
+      <section id="how-to-use" aria-labelledby="how-to-use-title">
+        <h2 id="how-to-use-title">How to use the {tool.name.toLowerCase()}</h2>
+        <ol>{guide.instructions.map(instruction => <li>{instruction}</li>)}</ol>
+      </section>
+      <section id="formulas" aria-labelledby="formulas-title">
+        <h2 id="formulas-title">Formulas and method</h2>
+        <dl class="tool-formulas">{guide.formulas.map(formula => <div><dt>{formula.name}</dt><dd><code>{formula.expression}</code><p>{formula.note}</p></dd></div>)}</dl>
+      </section>
+      <section id="worked-examples" aria-labelledby="worked-examples-title">
+        <h2 id="worked-examples-title">Worked examples</h2>
+        {guide.examples.map(example => <section><h3>{example.title}</h3><div class="worked-example">{example.steps.map(step => <div>{step}</div>)}</div><p>{example.explanation}</p></section>)}
+      </section>
+      <section aria-labelledby="tool-limits-title">
+        <h2 id="tool-limits-title">Supported inputs and precision</h2>
+        <p>{guide.limits}</p>
+        <p>Calculations run in your browser. No account or download is needed. The example answer and this guide are readable without JavaScript; enable JavaScript to calculate your own values.</p>
+      </section>
+      <section id="faq" class="tool-faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">Frequently asked questions</h2>
+        {guide.questions.map(item => <details><summary>{item.question}</summary><p>{item.answer}</p></details>)}
+      </section>
+      <aside class="related-topics" aria-labelledby="related-guides-title"><h2 id="related-guides-title">Related math guides</h2><ul>{guide.related.map(item => <li><a href={item.path}>{item.title} →</a></li>)}</ul></aside>
+      <p class="tool-feedback">Found an incorrect result? <a href={correctionUrl({ title: tool.name, url: `${site.url}${path}` })}>Report a calculation issue on GitHub</a> or <a href="/contact/">contact CalcSolver</a>. Include your inputs and the answer you expected. GitHub reports are public and require an account.</p>
+    </div>
     <nav class="more-tools" aria-label="More math tools"><span class="section-label">Keep calculating</span>{mathTools.filter(item => item.slug !== tool.slug).map(item => <a href={`/tools/${item.slug}/`}>{item.name} <span aria-hidden="true">↗</span></a>)}</nav>
   </div>
 </Base>

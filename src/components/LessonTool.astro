@@ -1,0 +1,45 @@
+---
+import { calculateLesson, type LessonToolConfig } from '../lib/lesson-tools';
+import { mathTools } from '../data/tools';
+interface Props { tool: LessonToolConfig }
+const { tool } = Astro.props;
+const result = calculateLesson(tool.kind, Object.fromEntries(tool.fields.map(field => [field.name, field.value])));
+const fractionTool = tool.kind === 'conversion' || tool.kind === 'equivalent';
+const linkedTool = mathTools.find(item => tool.toolLink?.startsWith(`/tools/${item.slug}/`));
+---
+<section class="lesson-tool" id="interactive-example" data-lesson-tool={tool.kind} aria-labelledby="lesson-tool-title">
+  <div class="lesson-tool-heading">
+    <span class="section-label">TRY THE METHOD</span>
+    <h2 id="lesson-tool-title">{tool.title}</h2>
+    <p>{tool.description}</p>
+  </div>
+  <form class="lesson-form" novalidate>
+    <fieldset disabled>
+      <legend class="sr-only">Change the example values</legend>
+      <div class="lesson-fields">
+        {tool.fields.map(field => <div class:list={['lesson-field', { 'lesson-field-wide': field.equation }]}>
+          <label for={`lesson-${field.name}`}>{field.label}</label>
+          <input id={`lesson-${field.name}`} name={field.name} value={field.value} inputmode={field.equation ? 'text' : 'numeric'} maxlength={field.equation ? 240 : fractionTool ? 31 : 6} autocomplete="off" spellcheck="false" aria-describedby="lesson-input-hint" />
+        </div>)}
+      </div>
+      <div class="lesson-form-footer">
+        <p id="lesson-input-hint">{tool.kind === 'linear' ? 'Linear equations in x only. Use parentheses, fractions or decimals.' : fractionTool ? `Use whole numbers and a nonzero denominator.${tool.kind === 'equivalent' ? ' Generate 1–10 examples.' : ''}` : 'Use whole numbers from −10,000 to 10,000.'} Results update as you type.</p>
+        <button type="button" data-reset-lesson>Reset example</button>
+      </div>
+    </fieldset>
+  </form>
+  <p class="lesson-error" data-lesson-error hidden></p>
+  <p class="sr-only" role="status" data-lesson-status></p>
+  <div class="lesson-result" data-lesson-result>
+    <p class="lesson-result-label" data-result-label>{result.label}</p>
+    <output class="lesson-answer" data-result-answer aria-live="off">{result.answer}</output>
+    <p class="lesson-result-summary" data-result-summary>{result.summary}</p>
+    <h3 data-steps-title>{result.stepsTitle ?? 'Step by step'}</h3>
+    <ol class="lesson-steps" data-result-steps>{result.steps.map(step => <li><span>{step.label}</span><code>{step.expression}</code></li>)}</ol>
+  </div>
+  {tool.toolLink && <a class="lesson-more" href={tool.toolLink}>Use the {linkedTool?.name.toLowerCase() ?? 'full calculator'} <span aria-hidden="true">→</span></a>}
+  <noscript><p class="lesson-noscript">This is the worked example. Enable JavaScript to change its values; calculations run in your browser.</p></noscript>
+</section>
+<script>
+  import '../scripts/lessons';
+</script>

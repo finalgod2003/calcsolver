@@ -7,6 +7,10 @@ if (tool) {
   const error = tool.querySelector<HTMLElement>('#tool-error')!;
   const output = tool.querySelector<HTMLElement>('#tool-output')!;
   const status = tool.querySelector<HTMLElement>('#tool-status')!;
+  const copyStatus = tool.querySelector<HTMLElement>('#copy-status')!;
+  const copyButton = tool.querySelector<HTMLButtonElement>('[data-copy-result]')!;
+  const resetButton = tool.querySelector<HTMLButtonElement>('[data-reset-tool]')!;
+  let resultToCopy = '';
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
   const value = (name: string) => field(name).value;
 
@@ -28,6 +32,8 @@ if (tool) {
   function calculate(announce = true) {
     error.hidden = true;
     status.textContent = '';
+    copyStatus.textContent = '';
+    resultToCopy = '';
     try {
       let result: ToolResult;
       switch (tool!.dataset.mathTool) {
@@ -51,6 +57,7 @@ if (tool) {
         return item;
       }));
       output.hidden = false;
+      resultToCopy = [`${result.label}: ${result.answer}`, result.summary, ...result.steps.map((step, index) => `${index + 1}. ${step.label}\n${step.expression}`)].join('\n\n');
       if (announce) status.textContent = `${result.label}: ${result.answer}. Steps are shown below.`;
     } catch (exception) {
       output.hidden = true;
@@ -64,6 +71,8 @@ if (tool) {
     updatePercentageLabels();
     output.hidden = true;
     error.hidden = true;
+    resultToCopy = '';
+    copyStatus.textContent = '';
     status.textContent = 'Values changed. Submit to update the result.';
   });
   tool.querySelectorAll<HTMLButtonElement>('[data-tool-example]').forEach(button => button.addEventListener('click', () => {
@@ -72,5 +81,40 @@ if (tool) {
     updatePercentageLabels();
     calculate();
   }));
+  resetButton.hidden = false;
+  resetButton.addEventListener('click', () => {
+    form.reset();
+    updatePercentageLabels();
+    calculate();
+    status.textContent = 'Example values and result restored.';
+  });
+  copyButton.hidden = false;
+  copyButton.addEventListener('click', async () => {
+    if (!resultToCopy) return;
+    const copiedResult = resultToCopy;
+    try {
+      await navigator.clipboard.writeText(copiedResult);
+      if (resultToCopy === copiedResult) copyStatus.textContent = 'Answer and steps copied.';
+    } catch {
+      if (resultToCopy === copiedResult) copyStatus.textContent = 'Copy is unavailable. Select the answer and steps to copy them manually.';
+    }
+  });
+  const presetFields: Record<string, string[]> = {
+    'equivalent-fractions': ['numerator', 'denominator', 'count'],
+    'percentage-calculator': ['mode', 'first', 'second'],
+    'equation-solver': ['equation'],
+  };
+  const params = new URLSearchParams(window.location.search);
+  for (const name of presetFields[tool.dataset.mathTool!] ?? []) {
+    const preset = params.get(name);
+    const input = field(name);
+    if (preset === null) continue;
+    if (input instanceof HTMLSelectElement) {
+      if (Array.from(input.options).some(option => option.value === preset)) input.value = preset;
+    } else if (preset.length <= input.maxLength) {
+      input.value = preset;
+    }
+  }
+  updatePercentageLabels();
   calculate(false);
 }

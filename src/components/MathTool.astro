@@ -1,10 +1,12 @@
 ---
 import type { MathToolSlug } from '../data/tools';
+import { calculateFractions, generateEquivalentFractions, calculatePercentage, solveLinearEquation } from '../lib/math-tools';
 interface Props { tool: MathToolSlug }
 const { tool } = Astro.props;
 const examples: Record<MathToolSlug, { label: string; values: Record<string, string> }[]> = {
   'fraction-calculator': [
     { label: '1/2 + 1/3', values: { an: '1', ad: '2', operation: 'add', bn: '1', bd: '3' } },
+    { label: '1/6 − 5/6', values: { an: '1', ad: '6', operation: 'subtract', bn: '5', bd: '6' } },
     { label: '3/4 ÷ 2/5', values: { an: '3', ad: '4', operation: 'divide', bn: '2', bd: '5' } },
     { label: '−2/3 × 9/4', values: { an: '-2', ad: '3', operation: 'multiply', bn: '9', bd: '4' } },
   ],
@@ -14,17 +16,27 @@ const examples: Record<MathToolSlug, { label: string; values: Record<string, str
   ],
   'percentage-calculator': [
     { label: '15% of 200', values: { mode: 'of', first: '15', second: '200' } },
+    { label: '30 is what % of 200?', values: { mode: 'ratio', first: '30', second: '200' } },
     { label: '80 → 100', values: { mode: 'change', first: '80', second: '100' } },
     { label: '20% off 150', values: { mode: 'decrease', first: '150', second: '20' } },
+    { label: 'Increase 200 by 10%', values: { mode: 'increase', first: '200', second: '10' } },
   ],
   'equation-solver': [
     { label: '2x + 3 = 11', values: { equation: '2x + 3 = 11' } },
     { label: '3(x − 2) = x + 8', values: { equation: '3(x - 2) = x + 8' } },
     { label: 'x/2 + 1/3 = 5/6', values: { equation: 'x/2 + 1/3 = 5/6' } },
+    { label: 'No solution', values: { equation: '2(x + 1) = 2x + 3' } },
+    { label: 'Infinitely many solutions', values: { equation: '2(x + 1) = 2x + 2' } },
   ],
 };
+const initialResult = {
+  'fraction-calculator': () => calculateFractions('1', '2', 'add', '1', '3'),
+  'equivalent-fractions': () => generateEquivalentFractions('2', '3', '5'),
+  'percentage-calculator': () => calculatePercentage('of', '15', '200'),
+  'equation-solver': () => solveLinearEquation('2x + 3 = 11'),
+}[tool]();
 ---
-<section class="math-tool" data-math-tool={tool} aria-label="Interactive calculator">
+<section class="math-tool" id="calculator" data-math-tool={tool} aria-label="Interactive calculator">
   <div class="tool-input-panel">
     <p class="section-label">01 / Your calculation</p>
     <form id="math-tool-form" novalidate>
@@ -49,17 +61,20 @@ const examples: Record<MathToolSlug, { label: string; values: Record<string, str
         <p class="tool-field-hint" id="equation-hint">Write both sides of the equation. You can enter 2x, 2*x, x/3 or 2(x + 1). Quadratic equations are not supported.</p>
       </>}
       <button class="tool-submit" type="submit">{tool === 'equivalent-fractions' ? 'Generate fractions' : tool === 'equation-solver' ? 'Solve equation' : 'Calculate'} <span aria-hidden="true">→</span></button>
+      <button class="tool-secondary" type="button" data-reset-tool hidden>Reset to example</button>
       <p class="tool-error" id="tool-error" role="alert" hidden></p>
       <p class="tool-status" id="tool-status" role="status"></p>
     </form>
     <div class="tool-examples"><span>Try an example</span>{examples[tool].map(example => <button type="button" data-tool-example={JSON.stringify(example.values)}>{example.label}</button>)}</div>
     <noscript><p>Enable JavaScript to calculate. These tools run in your browser.</p></noscript>
   </div>
-  <div class="tool-output-panel" id="tool-output" hidden aria-label="Calculation result">
+  <div class="tool-output-panel" id="tool-output" aria-label="Calculation result">
     <p class="section-label">02 / Result & method</p>
-    <div class="tool-answer"><p id="result-label"></p><output id="result-answer" form="math-tool-form"></output><p id="result-summary"></p></div>
-    <h2 id="steps-title">Step by step</h2>
-    <ol class="tool-steps" id="result-steps"></ol>
+    <div class="tool-answer"><p id="result-label">{initialResult.label}</p><output id="result-answer" form="math-tool-form">{initialResult.answer}</output><p id="result-summary">{initialResult.summary}</p></div>
+    <h2 id="steps-title">{initialResult.stepsTitle ?? 'Step by step'}</h2>
+    <ol class="tool-steps" id="result-steps">{initialResult.steps.map(step => <li><span>{step.label}</span><code>{step.expression}</code></li>)}</ol>
+    <button class="tool-secondary" type="button" data-copy-result hidden>Copy answer & steps</button>
+    <p class="tool-status" id="copy-status" role="status"></p>
   </div>
 </section>
 <script>

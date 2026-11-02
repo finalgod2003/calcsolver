@@ -79,7 +79,9 @@ The repository includes `vercel.json` for the static Astro build. Import the Git
 
 ## Contact, ads and analytics
 
-Create a working contact mailbox before setting `PUBLIC_CONTACT_EMAIL`. The contact link is determined at build time.
+Create a working contact mailbox or verified forwarding address before setting `PUBLIC_CONTACT_EMAIL`. For a domain address that forwards to a personal inbox, verify the destination and activate the routing rule before publishing the address. Receiving mail through a forwarding service does not configure outbound mail from the domain.
+
+For local previews, set `PUBLIC_CONTACT_EMAIL` in an untracked `.env` file. For the GitHub Actions deployment above, set the `PUBLIC_CONTACT_EMAIL` repository variable; the workflow passes it to the build step. Cloudflare dashboard build variables are not used by this Actions build. Publish only the domain address here; keep the private forwarding destination out of the repository. The Contact page shows the address, an email link and contact structured data after rebuilding. Without a valid email, the public GitHub feedback route remains available.
 
 Self-hosted Plausible analytics is configured in `src/components/Analytics.astro` with the dedicated `calcsolver.info` script: `https://stats.blackholeenglish.com/js/pa-SrqWkZG1nlPuPTtAm1TeR.js`. The site is registered in the existing Plausible instance with reporting timezone `Asia/Shanghai`. The component is included in all page heads, including local games, and initializes only on `calcsolver.info` in production builds. Development and `pages.dev` previews do not send analytics events.
 

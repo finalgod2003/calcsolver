@@ -45,7 +45,7 @@ See [SEO optimization notes](docs/seo-optimization.md) for keyword headings, str
 - Approved embed hosts and local entries: `src/lib/activities.ts`.
 - Math topics: `src/data/articles.ts`.
 - Analytics: `src/components/Analytics.astro`, using Google Analytics 4 measurement ID `G-WYZ9L2YKRH` alongside the dedicated `calcsolver.info` Plausible script from `stats.blackholeenglish.com`. Both are included in production builds and initialized only on the canonical hostname; local development and `pages.dev` previews do not send events.
-- Create a real support mailbox, then set `PUBLIC_CONTACT_EMAIL` in the deployment environment and rebuild. An empty value produces no email link; the website does not assume a mailbox exists.
+- Create a working support mailbox or verified forwarding address, then set `PUBLIC_CONTACT_EMAIL` in the GitHub Actions repository variables (or local `.env`) and rebuild. The workflow passes this public address to the build. An empty value keeps the public GitHub feedback route without displaying an unconfigured email.
 
 The catalog is a snapshot of public metadata observed at CalcSolver.net on 2026-09-30. External game files and thumbnails remain on the provider's servers. Only local games are self-contained; external availability, provider advertising and embedding permissions can change. The other reference-site server APIs were inaccessible and are not presented as working mirrors.
 

@@ -88,6 +88,19 @@ export function generateEquivalentFractions(numerator: string, denominator: stri
   return { label: 'Simplest form', answer: exact(simplest), summary: `Each fraction below has the same value as ${n}/${d}.`, stepsTitle: `${count} equivalent fractions`, steps };
 }
 
+export function convertFraction(numerator: string, denominator: string): ToolResult {
+  const value = fraction(integer(numerator, 'Numerator'), integer(denominator, 'Denominator'));
+  const percent = multiply(value, hundred);
+  return {
+    label: 'Decimal and percentage', answer: `${decimal(value)} · ${decimal(percent)}%`,
+    summary: `Exact fraction: ${exact(value)}. Decimal displays are rounded to 12 significant digits.`,
+    steps: [
+      { label: 'Divide the numerator by the denominator', expression: `${exact(value)} → ${decimal(value)}` },
+      { label: 'Multiply the original fraction by 100 to avoid rounding too early', expression: `(${exact(value)}) × 100 → ${decimal(percent)}%` },
+    ],
+  };
+}
+
 export function calculatePercentage(mode: PercentageMode, first: string, second: string): ToolResult {
   const a = number(first, 'First value'), b = number(second, 'Second value');
   let result: Fraction;

@@ -1,4 +1,47 @@
 ---
 import Base from '../layouts/Base.astro';
+import { editorial } from '../data/editorial';
 ---
-<Base title="About CalcSolver | Online Calculator & Math Guides" description="Learn how CalcSolver brings together a free online scientific calculator, worked math guides and browser activities, with clear explanations of its limits." pageType="AboutPage" breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}><div class="page-shell"><nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span> / </span><span>About</span></nav><h1>About CalcSolver: calculator & math guides</h1><p class="page-lead">A small tool for the numbers in your day.</p><div class="article-body"><h2>Our idea is simple</h2><p>Math tools should be easy to reach and easy to understand. CalcSolver.info brings together a browser calculator, short mathematical guides and activities for a little break between questions.</p><h2>Useful from the first click</h2><p>Use the calculator without signing up or installing an app. Calculations run on your device. Our guides show the method as well as the answer, so you can check your work and learn something along the way.</p><h2>How to use our math guides</h2><p>Each guide gives the rule and a worked example. Fraction conversions distinguish exact values from rounded repeating decimals; equivalent-fraction guides show how to check the result by cross-multiplication. The calculator evaluates numeric expressions. For symbolic equations, use the methods in our <a href="/category/algebra/">algebra guides</a>.</p><p>Calculator results use floating-point arithmetic and are displayed to 12 significant digits. Keep an exact fraction when rounding would lose information, and check the brackets and operators when a result surprises you.</p><h2>A little more to explore</h2><p>Code Mode opens a collection of activities. Enter 0000 to see the directory, or enter a four-digit activity number to open it directly. The local 2048 and Snake games run on this website; other activities load from external providers.</p><h2>About this domain</h2><p>This website is operated at calcsolver.info. It is a separate website from services using other CalcSolver domain names.</p></div><div class="calculator-cta"><span>Ready to work something out?</span><a href="/#calculator">Open the calculator →</a></div></div></Base>
+<Base title="About CalcSolver & Our Math Checking Policy" description="Meet the CalcSolver project, learn how its worked math examples and calculators are checked, and find its public source code and correction process." pageType="AboutPage" breadcrumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}>
+  <div class="page-shell">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span> / </span><span aria-current="page">About</span></nav>
+    <h1>About CalcSolver</h1>
+    <p class="page-lead">Everyday calculations, with a method you can follow.</p>
+    <div class="article-body">
+      <section id="author">
+        <h2>Who publishes these guides?</h2>
+        <p>CalcSolver is the publisher and maintainer of the calculators and math guides on calcsolver.info. Articles use the CalcSolver brand byline. Our focus is practical arithmetic, fractions and introductory algebra: explain the rule, work through an example, then let you try it yourself.</p>
+        <p>The <a href={editorial.repository}>CalcSolver project on GitHub</a> contains the site’s source code, article content and change history. Questions and corrections can be sent to the project through its <a href={editorial.issues}>public issue tracker</a>.</p>
+      </section>
+      <section id="editorial-policy">
+        <h2>How we check the math</h2>
+        <p>Guides pair worked examples with another way to reason about or check the result. Each guide links to relevant OpenStax textbook sections so you can read the underlying method in context.</p>
+        <ul>
+          <li><strong>Work from the rule.</strong> Fraction conversions use division and multiplication by 100. Equivalent fractions scale both parts by the same nonzero factor. Algebra examples show the operations and the conditions that make them valid.</li>
+          <li><strong>Check the result.</strong> Equivalent fractions can be cross-multiplied; factors can be expanded; division can be checked by multiplying the quotient by the divisor and adding the remainder; equation solutions can be substituted into both sides.</li>
+          <li><strong>Keep restrictions visible.</strong> Denominators cannot be zero, cancelling a factor does not restore an excluded input, and a numerical spot check alone is not a proof of an identity.</li>
+          <li><strong>Test calculator changes.</strong> Automated tests cover calculation examples and invalid inputs. The tests are available in the public project alongside the calculation code. They support checking; they do not guarantee that every possible mistake has been found.</li>
+        </ul>
+        <p>Each article displays its last content update date and offers two practice questions with explained answers.</p>
+      </section>
+      <section>
+        <h2>Exact answers, rounding and scope</h2>
+        <p>The fraction tools and linear equation solver use exact rational arithmetic for supported inputs. Their decimal displays are rounded to 12 significant digits. The quick answers at the top of repeating-decimal guides use six decimal places for decimals and four for percentages, with an approximation sign.</p>
+        <p>The main scientific calculator uses floating-point arithmetic. The embedded polynomial examples accept whole-number inputs from −10,000 to 10,000. Each lesson explains the form it supports: for example, quadratic division by x − r, or integer factoring of x² + bx + c. These examples are learning tools with a stated scope.</p>
+        <p>Keep an exact fraction when rounding would lose information. Use the displayed steps to check your input and the result.</p>
+      </section>
+      <section id="corrections">
+        <h2>How corrections are handled</h2>
+        <p>Use “Report a correction” at the end of any guide. It opens a GitHub issue draft with that article’s address and fields for the expression, expected result and observed problem. You can review the draft before submitting it. A GitHub account is required, and reports are public.</p>
+        <p>Reported mistakes are assessed by reproducing the example and checking the relevant rule. When a correction is made, the affected content or calculation is updated, the article’s date is revised when its content changes, and the code change remains visible in the project history. The public issue is the place to follow the report and its resolution.</p>
+        <p>For general questions or site problems, visit <a href="/contact/">Contact & feedback</a>. There is no public support email at present.</p>
+      </section>
+      <section>
+        <h2>Using the site</h2>
+        <p>Calculators and lesson exercises run in your browser, without an account. You can also explore <a href="/games/">Games / Code Mode</a>: local games are hosted here, while other activities load from external providers.</p>
+        <p>CalcSolver.info is a separate website from services using other CalcSolver domain names.</p>
+      </section>
+    </div>
+    <div class="calculator-cta"><span>Try a worked calculation.</span><a href="/#math-tools">Explore the math tools →</a></div>
+  </div>
+</Base>
